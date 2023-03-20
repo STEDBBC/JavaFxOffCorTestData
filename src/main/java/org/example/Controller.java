@@ -1,6 +1,7 @@
 package org.example;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.DirectoryChooser;
@@ -43,23 +44,39 @@ public class Controller {
 
     @FXML
     private void saveToFile() {
-        if (standNameComboBox.getValue() != null && userNameComboBox.getValue() != null && organizationComboBox.getValue() != null) {
-            String content = "Привет, " + userNameComboBox.getValue() + " " + standNameComboBox.getValue() + " " + organizationComboBox.getValue();
-            String fileName = "letter.txt";
-
-            if (chosenDirectory != null) {
-                File file = new File(chosenDirectory, fileName);
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                    writer.write(content);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("Выберите папку для сохранения файла");
-            }
-        } else {
-            System.out.println("Пожалуйста, выберите все значения");
+        if (standNameComboBox.getValue() == null || userNameComboBox.getValue() == null || organizationComboBox.getValue() == null || letterDatePicker.getValue() == null) {
+            showAlert("Выберите все параметры");
+            return;
         }
+
+        if (chosenDirectory == null) {
+            showAlert("Выберите папку для сохранения");
+            return;
+        }
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm:ss a");
+        String formattedDate = letterDatePicker.getValue().atStartOfDay().format(dateFormatter);
+
+        String script = "set context person creator;\n" +
+                "start  transaction;\n" +
+                "add bus IMS_PM_Letter TestPmLetter6 0 policy 'IMS_PM_ContractorsLetter' Description '999' IMS_Code 'ED-ASEM-NPPA-CM-000125' Originated '" + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest' owner '" + userNameComboBox.getValue() + "' Originator '" + userNameComboBox.getValue() + "' project 'JSC EC ASE CS' Organization '" + organizationComboBox.getValue() + "' current 'ReadyForSending' IMS;";
+
+        File outputFile = new File(chosenDirectory, "output_script.txt");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+            writer.write(script);
+            showAlert("Файл успешно сохранен");
+        } catch (IOException e) {
+            showAlert("Ошибка при сохранении файла");
+            e.printStackTrace();
+        }
+    }
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
 
