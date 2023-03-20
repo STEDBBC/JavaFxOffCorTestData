@@ -11,8 +11,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/org/example/sample.fxml"));
-        primaryStage.setTitle("Выбор ФИО");
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle("Скрипт для OFFCorrED");
+        primaryStage.setScene(new Scene(root ,800,600));
         primaryStage.show();
     }
 

@@ -8,5 +8,6 @@
     <ComboBox fx:id="surnameComboBox" promptText="Фамилия"/>
     <ComboBox fx:id="nameComboBox" promptText="Имя"/>
     <ComboBox fx:id="patronymicComboBox" promptText="Отчество"/>
+    <Button text="Выбрать папку" onAction="#chooseDirectory"/>
     <Button text="Сохранить" onAction="#saveToFile"/>
 </VBox>
