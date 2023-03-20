@@ -2,6 +2,7 @@ package org.example;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -9,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 public class Controller {
 
@@ -19,7 +21,10 @@ public class Controller {
     private ComboBox<String> userNameComboBox;
 
     @FXML
-    private ComboBox<String> patronymicComboBox;
+    private ComboBox<String> organizationComboBox;
+
+    @FXML
+    private DatePicker letterDatePicker;
 
     private File chosenDirectory;
 
@@ -27,9 +32,8 @@ public class Controller {
     public void initialize() {
         standNameComboBox.getItems().addAll("02", "04", "07", "11", "13", "d1", "t1");
         userNameComboBox.getItems().addAll("ec_user1", "migration_user", "oo_user1");
-        patronymicComboBox.getItems().addAll("Иванович", "Алексеевич", "Петрович");
+        organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
     }
-
     @FXML
     private void chooseDirectory() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -39,8 +43,8 @@ public class Controller {
 
     @FXML
     private void saveToFile() {
-        if (standNameComboBox.getValue() != null && userNameComboBox.getValue() != null && patronymicComboBox.getValue() != null) {
-            String content = "Привет, " + userNameComboBox.getValue() + " " + standNameComboBox.getValue() + " " + patronymicComboBox.getValue();
+        if (standNameComboBox.getValue() != null && userNameComboBox.getValue() != null && organizationComboBox.getValue() != null) {
+            String content = "Привет, " + userNameComboBox.getValue() + " " + standNameComboBox.getValue() + " " + organizationComboBox.getValue();
             String fileName = "letter.txt";
 
             if (chosenDirectory != null) {

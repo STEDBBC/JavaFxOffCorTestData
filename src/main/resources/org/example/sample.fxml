@@ -7,7 +7,8 @@
       fx:controller="org.example.Controller">
     <ComboBox fx:id="standNameComboBox" promptText="Имя стенда"/>
     <ComboBox fx:id="userNameComboBox" promptText="Пользователь"/>
-    <ComboBox fx:id="patronymicComboBox" promptText="Отчество"/>
+    <ComboBox fx:id="organizationComboBox" promptText="Организация"/>
+    <DatePicker fx:id="letterDatePicker" promptText="Дата письма"/>
     <Button text="Выбрать папку" onAction="#chooseDirectory"/>
     <Button text="Сохранить" onAction="#saveToFile"/>
 </VBox>
