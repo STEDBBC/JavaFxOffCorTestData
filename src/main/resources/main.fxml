@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx"
+      fx:controller="org.example.Controller">
+    <ComboBox fx:id="surnameComboBox" promptText="Фамилия"/>
+    <ComboBox fx:id="nameComboBox" promptText="Имя"/>
+    <ComboBox fx:id="patronymicComboBox" promptText="Отчество"/>
+    <Button text="Сохранить" onAction="#saveToFile"/>
+</VBox>
