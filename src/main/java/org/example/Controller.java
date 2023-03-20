@@ -2,9 +2,8 @@ package org.example;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,10 +13,10 @@ import java.io.IOException;
 public class Controller {
 
     @FXML
-    private ComboBox<String> nameComboBox;
+    private ComboBox<String> standNameComboBox;
 
     @FXML
-    private ComboBox<String> surnameComboBox;
+    private ComboBox<String> userNameComboBox;
 
     @FXML
     private ComboBox<String> patronymicComboBox;
@@ -26,46 +25,37 @@ public class Controller {
 
     @FXML
     public void initialize() {
-
-        surnameComboBox.getItems().addAll("Смирнов", "Иванов", "Кузнецов");
-        nameComboBox.getItems().addAll("Иван", "Петр", "Сергей");
-        patronymicComboBox.getItems().addAll("Александрович", "Петрович", "Сергеевич");
+        standNameComboBox.getItems().addAll("02", "04", "07", "11", "13", "d1", "t1");
+        userNameComboBox.getItems().addAll("ec_user1", "migration_user", "oo_user1");
+        patronymicComboBox.getItems().addAll("Иванович", "Алексеевич", "Петрович");
     }
 
     @FXML
-    public void saveToFile() {
-        if (nameComboBox.getValue() == null || surnameComboBox.getValue() == null || patronymicComboBox.getValue() == null) {
-            showAlert("Ошибка", "Необходимо выбрать имя, фамилию и отчество.");
-            return;
-        }
-
-        if (chosenDirectory == null) {
-            showAlert("Ошибка", "Необходимо выбрать папку для сохранения файла.");
-            return;
-        }
-
-        String fileName = "greeting.txt";
-        File file = new File(chosenDirectory, fileName);
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("Привет " + nameComboBox.getValue() + " " + surnameComboBox.getValue() + " " + patronymicComboBox.getValue());
-        } catch (IOException e) {
-            showAlert("Ошибка", "Не удалось сохранить файл: " + e.getMessage());
-        }
-    }
-
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-    @FXML
-    public void chooseDirectory() {
+    private void chooseDirectory() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Выберите папку для сохранения файла");
-        chosenDirectory = directoryChooser.showDialog(nameComboBox.getScene().getWindow());
+        Stage stage = new Stage();
+        chosenDirectory = directoryChooser.showDialog(stage);
+    }
+
+    @FXML
+    private void saveToFile() {
+        if (standNameComboBox.getValue() != null && userNameComboBox.getValue() != null && patronymicComboBox.getValue() != null) {
+            String content = "Привет, " + userNameComboBox.getValue() + " " + standNameComboBox.getValue() + " " + patronymicComboBox.getValue();
+            String fileName = "letter.txt";
+
+            if (chosenDirectory != null) {
+                File file = new File(chosenDirectory, fileName);
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                    writer.write(content);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Выберите папку для сохранения файла");
+            }
+        } else {
+            System.out.println("Пожалуйста, выберите все значения");
+        }
     }
 }
+

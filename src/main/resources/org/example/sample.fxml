@@ -5,8 +5,8 @@
 
 <VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx"
       fx:controller="org.example.Controller">
-    <ComboBox fx:id="surnameComboBox" promptText="Фамилия"/>
-    <ComboBox fx:id="nameComboBox" promptText="Имя"/>
+    <ComboBox fx:id="standNameComboBox" promptText="Имя стенда"/>
+    <ComboBox fx:id="userNameComboBox" promptText="Пользователь"/>
     <ComboBox fx:id="patronymicComboBox" promptText="Отчество"/>
     <Button text="Выбрать папку" onAction="#chooseDirectory"/>
     <Button text="Сохранить" onAction="#saveToFile"/>
