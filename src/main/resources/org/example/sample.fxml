@@ -5,6 +5,8 @@
 
 <VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx"
       fx:controller="org.example.Controller">
+    <Label text="Количество писем:"/>
+    <TextField fx:id="lettersAmountTextField" promptText="Введите число" maxWidth="100" onKeyTyped="#handleNumberInput"/>
     <ComboBox fx:id="standNameComboBox" promptText="Имя стенда"/>
     <ComboBox fx:id="userNameComboBox" promptText="Пользователь"/>
     <ComboBox fx:id="organizationComboBox" promptText="Организация"/>
