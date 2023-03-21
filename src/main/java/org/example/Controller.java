@@ -1,10 +1,7 @@
 package org.example;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -15,11 +12,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 public class Controller {
 
     @FXML
     private ComboBox<String> standNameComboBox;
 
+    private Tooltip tooltip = new Tooltip("Только числа");
     @FXML
     private ComboBox<String> userNameComboBox;
 
@@ -27,6 +29,12 @@ public class Controller {
     private ComboBox<String> organizationComboBox;
     @FXML
     private TextField lettersAmountTextField;
+
+
+    @FXML
+    private Label warningLabel;
+
+    private BooleanProperty isInvalidInput = new SimpleBooleanProperty(false);
 
 
     @FXML
@@ -39,6 +47,7 @@ public class Controller {
         standNameComboBox.getItems().addAll("02", "04", "07", "11", "13", "d1", "t1");
         userNameComboBox.getItems().addAll("ec_user1", "migration_user", "oo_user1");
         organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
+        warningLabel.visibleProperty().bind(isInvalidInput);
     }
 
     @FXML
@@ -64,7 +73,7 @@ public class Controller {
         try {
             lettersAmount = Integer.parseInt(lettersAmountTextField.getText());
         } catch (NumberFormatException e) {
-            showAlert("Введите корректное количество писем");
+            showAlert("Введите корректное количество писем (целое число)");
             return;
         }
 
@@ -103,6 +112,8 @@ public class Controller {
     private void handleNumberInput(KeyEvent event) {
         if (!event.getCharacter().matches("\\d")) {
             event.consume();
+            isInvalidInput.set(true);
+            lettersAmountTextField.setOnKeyReleased(e -> isInvalidInput.set(false));
         }
     }
 }
