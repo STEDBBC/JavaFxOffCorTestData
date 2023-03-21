@@ -15,6 +15,8 @@ import java.time.format.DateTimeFormatter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Controller {
 
@@ -30,7 +32,29 @@ public class Controller {
     @FXML
     private TextField lettersAmountTextField;
 
+    @FXML
+    private ComboBox<String> topicComboBox;
 
+    private final ObservableList<String> topics = FXCollections.observableArrayList(
+            "Information Technology",
+            "Quality Management",
+            "Project Management",
+            "Safety Management",
+            "Radiation Safety",
+            "Cost Management",
+            "Human Management",
+            "Change Management",
+            "Interface Management",
+            "Commissioning",
+            "General",
+            "Procurement and Supply",
+            "Training",
+            "Licensing and Permits",
+            "Construction Management",
+            "Security Management",
+            "Contract Management",
+            "Design Management"
+    );
     @FXML
     private Label warningLabel;
 
@@ -47,6 +71,7 @@ public class Controller {
         standNameComboBox.getItems().addAll("02", "04", "07", "11", "13", "d1", "t1");
         userNameComboBox.getItems().addAll("ec_user1", "migration_user", "oo_user1");
         organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
+        topicComboBox.setItems(topics);
         warningLabel.visibleProperty().bind(isInvalidInput);
     }
 
@@ -83,10 +108,11 @@ public class Controller {
         File outputFile = new File(chosenDirectory, "output_script.txt");
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+            writer.write("set context person creator;\n");
+            writer.write("start  transaction;\n");
+
             for (int i = 1; i <= lettersAmount; i++) {
-                String script = "set context person creator;\n" +
-                        "start  transaction;\n" +
-                        "add bus IMS_PM_Letter TestPmLetter" + i + " 0 policy 'IMS_PM_ContractorsLetter' Description '999' IMS_Code 'ED-ASEM-NPPA-CM-000125' Originated '"
+                String script = "add bus IMS_PM_Letter TestPmLetter" + i + " 0 policy 'IMS_PM_ContractorsLetter' Description '999' IMS_Code 'ED-ASEM-NPPA-CM-000125' Originated '"
                         + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
                         + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
                         + userNameComboBox.getValue() + "' project 'JSC EC ASE CS' Organization '"
@@ -94,6 +120,9 @@ public class Controller {
                         + formattedDate + "';\n";
                 writer.write(script);
             }
+
+            writer.write("commit transaction;\n");
+
             showAlert("Файл успешно сохранен");
         } catch (IOException e) {
             showAlert("Ошибка при сохранении файла");

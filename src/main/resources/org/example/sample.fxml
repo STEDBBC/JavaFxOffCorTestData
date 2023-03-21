@@ -14,6 +14,8 @@
     <ComboBox fx:id="userNameComboBox" promptText="Пользователь"/>
     <Label text="Выбор организации:"/>
     <ComboBox fx:id="organizationComboBox" promptText="Организация"/>
+    <Label text="Выбор топика:"/>
+    <ComboBox fx:id="topicComboBox" promptText="Топик"/>
 
     <DatePicker fx:id="letterDatePicker" promptText="Дата письма"/>
     <Button text="Выбрать папку" onAction="#chooseDirectory"/>
