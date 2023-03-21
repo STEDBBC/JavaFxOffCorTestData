@@ -148,7 +148,8 @@ public class Controller {
             writer.write("start  transaction;\n");
 
             for (int i = 1; i <= lettersAmount; i++) {
-                String script = "add bus IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 policy '" + policy + "' Description '999' IMS_Code 'ED-ASEM-NPPA-CM-000125' Originated '"
+                String imsCode = generateImsCode(organizationComboBox.getValue(), topicComboBox.getValue(), i);
+                String script = "add bus IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 policy '" + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
                         + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
                         + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
                         + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
@@ -182,5 +183,79 @@ public class Controller {
             lettersAmountTextField.setOnKeyReleased(e -> isInvalidInput.set(false));
         }
     }
+    private String generateImsCode(String organization, String topic, int letterNumber) {
+        String organizationPart;
+        String topicPart;
+        String staticPart = "ED";
+        String numberPart = String.format("-%06d", letterNumber);
+
+        if ("JSC EC ASE".equals(organization) || "JSC ASE".equals(organization)) {
+            organizationPart = "-ASEM-NPPA";
+        } else {
+            organizationPart = "-NPPA-ASEM";
+        }
+
+        switch (topic) {
+            case "Information Technology":
+                topicPart = "IT";
+                break;
+            case "Quality Management":
+                topicPart = "QI";
+                break;
+            case "Project Management":
+                topicPart = "PM";
+                break;
+            case "Safety Management":
+                topicPart = "NS";
+                break;
+            case "Radiation Safety":
+                topicPart = "RS";
+                break;
+            case "Cost Management":
+                topicPart = "FI";
+                break;
+            case "Human Management":
+                topicPart = "HR";
+                break;
+            case "Change Management":
+                topicPart = "CM";
+                break;
+            case "Interface Management":
+                topicPart = "IM";
+                break;
+            case "Commissioning":
+                topicPart = "CO";
+                break;
+            case "General":
+                topicPart = "GE";
+                break;
+            case "Procurement and Supply":
+                topicPart = "PO";
+                break;
+            case "Training":
+                topicPart = "TR";
+                break;
+            case "Licensing and Permits":
+                topicPart = "LP";
+                break;
+            case "Construction Management":
+                topicPart = "CA";
+                break;
+            case "Security Management":
+                topicPart = "SM";
+                break;
+            case "Contract Management":
+                topicPart = "LA";
+                break;
+            case "Design Management":
+                topicPart = "DM";
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown topic: " + topic);
+        }
+
+        return staticPart + organizationPart + "-" + topicPart + numberPart;
+    }
+
 }
 
