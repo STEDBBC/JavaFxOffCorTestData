@@ -165,6 +165,8 @@ public class Controller {
                 writer.write("set topicNameRevision [mql temp query bus IMS_Adm_GeneralClass " + topicId + " * select id dump tcl];\n");
                 writer.write("set topicId [lindex $topicNameRevision 0 3 0];\n");
                 writer.write("mql add connection IMS_ClassifiedItem to IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 from $topicId;\n");
+                // Add connection to user
+                writer.write("mql add connection IMS_PM_Letter2Creator from IMS_PM_Letter TestPmLetterFromJavaFX" + i + " to Person " + userNameComboBox.getValue() + " -;\n");
             }
 
             writer.write("mql commit transaction;\n");
