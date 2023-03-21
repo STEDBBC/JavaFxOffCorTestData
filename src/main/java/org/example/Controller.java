@@ -34,6 +34,19 @@ public class Controller {
 
     @FXML
     private ComboBox<String> topicComboBox;
+    @FXML
+    private ComboBox<String> statusComboBox;
+    private final ObservableList<String> contractorStatuses = FXCollections.observableArrayList(
+            "Created",
+            "ReadyForSending",
+            "Uploaded"
+    );
+
+    private final ObservableList<String> customerStatuses = FXCollections.observableArrayList(
+            "Created",
+            "Uploaded"
+    );
+
 
     private final ObservableList<String> topics = FXCollections.observableArrayList(
             "Information Technology",
@@ -73,6 +86,15 @@ public class Controller {
         organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
         topicComboBox.setItems(topics);
         warningLabel.visibleProperty().bind(isInvalidInput);
+        organizationComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if ("JSC EC ASE".equals(newValue) || "JSC ASE".equals(newValue)) {
+                statusComboBox.setItems(contractorStatuses);
+            } else if ("Nuclear Power Plant Authority".equals(newValue)) {
+                statusComboBox.setItems(customerStatuses);
+            } else {
+                statusComboBox.setItems(FXCollections.emptyObservableList());
+            }
+        });
     }
 
     @FXML
@@ -151,6 +173,7 @@ public class Controller {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     private void handleNumberInput(KeyEvent event) {
         if (!event.getCharacter().matches("\\d")) {
