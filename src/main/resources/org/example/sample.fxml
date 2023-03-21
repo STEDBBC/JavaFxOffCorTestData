@@ -8,9 +8,13 @@
     <Label text="Количество писем:"/>
     <TextField fx:id="lettersAmountTextField" promptText="Введите число" maxWidth="100" onKeyTyped="#handleNumberInput"/>
     <Label fx:id="warningLabel" text="Только числа" textFill="RED" visible="false" />
+    <Label text="Выбор стенда:"/>
     <ComboBox fx:id="standNameComboBox" promptText="Имя стенда"/>
+    <Label text="Выбор пользователя:"/>
     <ComboBox fx:id="userNameComboBox" promptText="Пользователь"/>
+    <Label text="Выбор организации:"/>
     <ComboBox fx:id="organizationComboBox" promptText="Организация"/>
+
     <DatePicker fx:id="letterDatePicker" promptText="Дата письма"/>
     <Button text="Выбрать папку" onAction="#chooseDirectory"/>
     <Button text="Сохранить" onAction="#saveToFile"/>
