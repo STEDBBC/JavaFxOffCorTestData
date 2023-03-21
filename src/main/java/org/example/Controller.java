@@ -101,7 +101,21 @@ public class Controller {
             showAlert("Введите корректное количество писем (целое число)");
             return;
         }
+        String policy;
+        String project;
 
+        String selectedOrganization = organizationComboBox.getValue();
+
+        if ("JSC EC ASE".equals(selectedOrganization) || "JSC ASE".equals(selectedOrganization)) {
+            policy = "IMS_PM_ContractorsLetter";
+            project = "JSC EC ASE CS";
+        } else if ("Nuclear Power Plant Authority".equals(selectedOrganization)) {
+            policy = "IMS_PM_OwnersLetter";
+            project = "Nuclear Power Plant Authority CS";
+        } else {
+            showAlert("Выберите корректную организацию");
+            return;
+        }
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm:ss a");
         String formattedDate = letterDatePicker.getValue().atStartOfDay().format(dateFormatter);
 
@@ -112,10 +126,10 @@ public class Controller {
             writer.write("start  transaction;\n");
 
             for (int i = 1; i <= lettersAmount; i++) {
-                String script = "add bus IMS_PM_Letter TestPmLetter" + i + " 0 policy 'IMS_PM_ContractorsLetter' Description '999' IMS_Code 'ED-ASEM-NPPA-CM-000125' Originated '"
+                String script = "add bus IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 policy '" + policy + "' Description '999' IMS_Code 'ED-ASEM-NPPA-CM-000125' Originated '"
                         + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
                         + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
-                        + userNameComboBox.getValue() + "' project 'JSC EC ASE CS' Organization '"
+                        + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
                         + organizationComboBox.getValue() + "' current 'ReadyForSending' IMS_CorrespondenceSubject 'subject text' IMS_RegistrationDate '"
                         + formattedDate + "';\n";
                 writer.write(script);
