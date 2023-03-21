@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -145,26 +147,34 @@ public class Controller {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
             writer.write("set context person creator;\n");
-            writer.write("start  transaction;\n");
+            writer.write("start transaction;\n");
+            writer.write("tcl;\n");
 
             for (int i = 1; i <= lettersAmount; i++) {
                 String imsCode = generateImsCode(organizationComboBox.getValue(), topicComboBox.getValue(), i);
-                String script = "add bus IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 policy '" + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
+                String script = "mql add bus IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 policy '" + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
                         + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
                         + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
                         + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
                         + organizationComboBox.getValue() + "' current 'ReadyForSending' IMS_CorrespondenceSubject 'subject text' IMS_RegistrationDate '"
                         + formattedDate + "';\n";
                 writer.write(script);
+
+                // Add connection to topic
+                String topicId = getTopicId(topicComboBox.getValue());
+                writer.write("set topicNameRevision [mql temp query bus IMS_Adm_GeneralClass " + topicId + " * select id dump tcl];\n");
+                writer.write("set topicId [lindex $topicNameRevision 0 3 0];\n");
+                writer.write("mql add connection IMS_ClassifiedItem to IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 from $topicId;\n");
             }
 
-            writer.write("commit transaction;\n");
+            writer.write("mql commit transaction;\n");
 
             showAlert("Файл успешно сохранен");
         } catch (IOException e) {
             showAlert("Ошибка при сохранении файла");
             e.printStackTrace();
         }
+
     }
 
     private void showAlert(String message) {
@@ -255,6 +265,29 @@ public class Controller {
         }
 
         return staticPart + organizationPart + "-" + topicPart + numberPart;
+    }
+    private String getTopicId(String topicName) {
+        Map<String, String> topicIds = new HashMap<>();
+        topicIds.put("Design Management", "0000113001");
+        topicIds.put("Information Technology", "0000113002");
+        topicIds.put("Contract Management", "0000113003");
+        topicIds.put("Quality Management", "0000113004");
+        topicIds.put("Security Management", "0000113005");
+        topicIds.put("Project Management", "0000113006");
+        topicIds.put("Construction Management", "0000113007");
+        topicIds.put("Safety Management", "0000113008");
+        topicIds.put("Licensing and Permits", "0000113009");
+        topicIds.put("Radiation Safety", "0000113010");
+        topicIds.put("Training", "0000113011");
+        topicIds.put("Cost Management", "0000113012");
+        topicIds.put("Procurement and Supply", "0000113013");
+        topicIds.put("Human Management", "0000113014");
+        topicIds.put("General", "0000113015");
+        topicIds.put("Change Management", "0000113016");
+        topicIds.put("Commissioning", "0000113017");
+        topicIds.put("Interface Management", "0000113018");
+
+        return topicIds.get(topicName);
     }
 
 }
