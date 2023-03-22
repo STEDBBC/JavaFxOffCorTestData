@@ -84,7 +84,11 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        userNameComboBox.getItems().addAll("ec_user1", "migration_user", "oo_user1");
+        userNameComboBox.getItems().addAll(
+                "ec_user1", "migration_user", "oo_user1",
+                "ec_user2", "ec_user3", "ec_user4", "ec_user5",
+                "oo_user2", "oo_user3", "oo_user4", "oo_user5"
+        );
         organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
         recipientOrganizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
         topicComboBox.setItems(topics);
