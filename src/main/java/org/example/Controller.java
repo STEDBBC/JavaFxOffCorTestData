@@ -22,8 +22,7 @@ import javafx.collections.ObservableList;
 
 public class Controller {
 
-    @FXML
-    private ComboBox<String> standNameComboBox;
+
 
     private Tooltip tooltip = new Tooltip("Только числа");
     @FXML
@@ -85,7 +84,6 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        standNameComboBox.getItems().addAll("02", "04", "07", "11", "13", "d1", "t1");
         userNameComboBox.getItems().addAll("ec_user1", "migration_user", "oo_user1");
         organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
         recipientOrganizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
@@ -111,7 +109,7 @@ public class Controller {
 
     @FXML
     private void saveToFile() {
-        if (standNameComboBox.getValue() == null || userNameComboBox.getValue() == null || organizationComboBox.getValue() == null || letterDatePicker.getValue() == null) {
+        if (userNameComboBox.getValue() == null || organizationComboBox.getValue() == null || letterDatePicker.getValue() == null) {
             showAlert("Выберите все параметры");
             return;
         }
@@ -157,7 +155,7 @@ public class Controller {
                 String selectedStatus = statusComboBox.getValue();
 
                 String imsCode = generateImsCode(organizationComboBox.getValue(), topicComboBox.getValue(), i);
-                String script = "mql add bus IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 policy '" + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
+                String script = "mql add bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%07d", i)  + " 0 policy '" + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
                         + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
                         + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
                         + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
