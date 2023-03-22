@@ -1,2 +1,6 @@
 # Project exclude paths
 /target/
+/dependency-reduced-pom.xml
+/Main-1.0.dmg
+/Main-1.0.pkg
+/org.java
