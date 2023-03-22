@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -146,12 +145,17 @@ public class Controller {
         String formattedDate = letterDatePicker.getValue().atStartOfDay().format(dateFormatter);
 
         File outputFile = new File(chosenDirectory, "output_script.txt");
+        File deleteOutputFile = new File(chosenDirectory, "delete_script.txt");
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+             BufferedWriter deleteWriter = new BufferedWriter(new FileWriter(deleteOutputFile))) {
             writer.write("set context person creator;\n");
             writer.write("start transaction;\n");
             writer.write("tcl;\n");
             Random random = new Random();
+            deleteWriter.write("set context person creator;\n");
+            deleteWriter.write("start transaction;\n");
             for (int i = 1; i <= lettersAmount; i++) {
                 String selectedStatus = statusComboBox.getValue();
 
@@ -164,7 +168,8 @@ public class Controller {
                         + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
                         + organizationComboBox.getValue() + "' current '" + selectedStatus + "' IMS_CorrespondenceSubject 'subject text' IMS_RegistrationDate '"
                         + formattedDate + "';\n";
-
+                String deleteScript = "del bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%07d-%05d", randomNumber, i) + " 0;\n";
+                deleteWriter.write(deleteScript);
                 writer.write(script);
 
                 // Add connection to topic
@@ -183,6 +188,7 @@ public class Controller {
 
 
             writer.write("mql commit transaction;\n");
+            deleteWriter.write("commit transaction;\n");
 
             showAlert("Файл успешно сохранен");
         } catch (IOException e) {
