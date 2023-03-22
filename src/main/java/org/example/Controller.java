@@ -161,14 +161,14 @@ public class Controller {
 
                 int randomNumber = random.nextInt(1000000) + 1;
                 String imsCode = generateImsCode(organizationComboBox.getValue(), topicComboBox.getValue(), i);
-                String script = "mql add bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%07d-%05d", randomNumber, i) + " 0 policy '"
+                String script = "mql add bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 policy '"
                         + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
                         + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
                         + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
                         + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
                         + organizationComboBox.getValue() + "' current '" + selectedStatus + "' IMS_CorrespondenceSubject 'subject text' IMS_RegistrationDate '"
                         + formattedDate + "';\n";
-                String deleteScript = "del bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%07d-%05d", randomNumber, i) + " 0;\n";
+                String deleteScript = "del bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n";
                 deleteWriter.write(deleteScript);
                 writer.write(script);
 
@@ -176,14 +176,14 @@ public class Controller {
                 String topicId = getTopicId(topicComboBox.getValue());
                 writer.write("set topicNameRevision [mql temp query bus IMS_Adm_GeneralClass " + topicId + " * select id dump tcl];\n");
                 writer.write("set topicId [lindex $topicNameRevision 0 3 0];\n");
-                writer.write("mql add connection IMS_ClassifiedItem to IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%07d-%05d", randomNumber, i) + " 0 from $topicId;\n");
+                writer.write("mql add connection IMS_ClassifiedItem to IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 from $topicId;\n");
                 // Add connection to user
-                writer.write("mql add connection IMS_PM_Letter2Creator from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%07d-%05d", randomNumber, i) + " 0 to Person " + userNameComboBox.getValue() + " -;\n");
+                writer.write("mql add connection IMS_PM_Letter2Creator from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 to Person " + userNameComboBox.getValue() + " -;\n");
                //связь на организатора отправителя
-                writer.write("mql add connection IMS_PM_Letter2SenderOrganization to Company '" + organizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%07d-%05d", randomNumber, i) + " 0;\n");
+                writer.write("mql add connection IMS_PM_Letter2SenderOrganization to Company '" + organizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n");
 
                 // Добавляем связь с организацией-получателем
-                writer.write("mql add connection IMS_PM_Letter2RecipientOrganization to Company '" + recipientOrganizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%07d-%05d", randomNumber, i) + " 0;\n");
+                writer.write("mql add connection IMS_PM_Letter2RecipientOrganization to Company '" + recipientOrganizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n");
             }
 
 
