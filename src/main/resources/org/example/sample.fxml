@@ -12,13 +12,14 @@
     <ComboBox fx:id="standNameComboBox" promptText="Имя стенда"/>
     <Label text="Выбор пользователя:"/>
     <ComboBox fx:id="userNameComboBox" promptText="Пользователь"/>
-    <Label text="Выбор организации:"/>
-    <ComboBox fx:id="organizationComboBox" promptText="Организация"/>
+    <Label text="Выбор организации отправителя:"/>
+    <ComboBox fx:id="organizationComboBox" promptText="Организация отправителя"/>
+    <Label text="Выбор организации получателя:"/>
+    <ComboBox fx:id="recipientOrganizationComboBox" promptText="Организация получателя"/>
     <Label text="Выбор топика:"/>
     <ComboBox fx:id="topicComboBox" promptText="Топик"/>
     <Label text="Выбор статуса письма:"/>
     <ComboBox fx:id="statusComboBox" promptText="Статус"/>
-
     <DatePicker fx:id="letterDatePicker" promptText="Дата письма"/>
     <Button text="Выбрать папку" onAction="#chooseDirectory"/>
     <Button text="Сохранить" onAction="#saveToFile"/>

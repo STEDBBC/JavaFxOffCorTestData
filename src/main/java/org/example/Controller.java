@@ -37,6 +37,8 @@ public class Controller {
     @FXML
     private ComboBox<String> topicComboBox;
     @FXML
+    private ComboBox<String> recipientOrganizationComboBox;
+    @FXML
     private ComboBox<String> statusComboBox;
     private final ObservableList<String> contractorStatuses = FXCollections.observableArrayList(
             "Created",
@@ -86,6 +88,7 @@ public class Controller {
         standNameComboBox.getItems().addAll("02", "04", "07", "11", "13", "d1", "t1");
         userNameComboBox.getItems().addAll("ec_user1", "migration_user", "oo_user1");
         organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
+        recipientOrganizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
         topicComboBox.setItems(topics);
         warningLabel.visibleProperty().bind(isInvalidInput);
         organizationComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -151,13 +154,16 @@ public class Controller {
             writer.write("tcl;\n");
 
             for (int i = 1; i <= lettersAmount; i++) {
+                String selectedStatus = statusComboBox.getValue();
+
                 String imsCode = generateImsCode(organizationComboBox.getValue(), topicComboBox.getValue(), i);
                 String script = "mql add bus IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 policy '" + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
                         + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
                         + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
                         + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
-                        + organizationComboBox.getValue() + "' current 'ReadyForSending' IMS_CorrespondenceSubject 'subject text' IMS_RegistrationDate '"
+                        + organizationComboBox.getValue() + "' current '" + selectedStatus + "' IMS_CorrespondenceSubject 'subject text' IMS_RegistrationDate '"
                         + formattedDate + "';\n";
+
                 writer.write(script);
 
                 // Add connection to topic
@@ -167,7 +173,13 @@ public class Controller {
                 writer.write("mql add connection IMS_ClassifiedItem to IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 from $topicId;\n");
                 // Add connection to user
                 writer.write("mql add connection IMS_PM_Letter2Creator from IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0 to Person " + userNameComboBox.getValue() + " -;\n");
+               //связь на организатора отправителя
+                writer.write("mql add connection IMS_PM_Letter2SenderOrganization to Company '" + organizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0;\n");
+
+                // Добавляем связь с организацией-получателем
+                writer.write("mql add connection IMS_PM_Letter2RecipientOrganization to Company '" + recipientOrganizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + i + " 0;\n");
             }
+
 
             writer.write("mql commit transaction;\n");
 
