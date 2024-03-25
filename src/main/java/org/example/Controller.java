@@ -23,7 +23,6 @@ import javafx.collections.ObservableList;
 public class Controller {
 
 
-
     private Tooltip tooltip = new Tooltip("Только числа");
     @FXML
     private ComboBox<String> userNameComboBox;
@@ -41,8 +40,7 @@ public class Controller {
     private ComboBox<String> statusComboBox;
     private final ObservableList<String> contractorStatuses = FXCollections.observableArrayList(
             "Created",
-            "ReadyForSending",
-            "Uploaded"
+            "Published"
     );
 
     private final ObservableList<String> customerStatuses = FXCollections.observableArrayList(
@@ -81,22 +79,24 @@ public class Controller {
     private DatePicker letterDatePicker;
 
     private File chosenDirectory;
+    //VPLMProjectLeader.EPC Contractor Company.EPC Contractor CS
+    //VPLMProjectLeader.Owner Operator Company.Owner Operator CS
 
     @FXML
     public void initialize() {
         userNameComboBox.getItems().addAll(
                 "ec_user1", "migration_user", "oo_user1",
                 "ec_user2", "ec_user3", "ec_user4", "ec_user5",
-                "oo_user2", "oo_user3", "oo_user4", "oo_user5"
+                "oo_user2", "oo_user3", "oo_user4", "oo_user5", "epc_contr_user2"
         );
-        organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
-        recipientOrganizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority");
+        organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "EPC Contractor Company");
+        recipientOrganizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "Owner Operator Company");
         topicComboBox.setItems(topics);
         warningLabel.visibleProperty().bind(isInvalidInput);
         organizationComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if ("JSC EC ASE".equals(newValue) || "JSC ASE".equals(newValue)) {
+            if ("JSC EC ASE".equals(newValue) || "JSC ASE".equals(newValue) || "EPC Contractor Company".equals(newValue)) {
                 statusComboBox.setItems(contractorStatuses);
-            } else if ("Nuclear Power Plant Authority".equals(newValue)) {
+            } else if ("Nuclear Power Plant Authority".equals(newValue)|| "Owner Operator Company".equals(newValue)) {
                 statusComboBox.setItems(customerStatuses);
             } else {
                 statusComboBox.setItems(FXCollections.emptyObservableList());
@@ -141,6 +141,12 @@ public class Controller {
         } else if ("Nuclear Power Plant Authority".equals(selectedOrganization)) {
             policy = "IMS_PM_OwnersLetter";
             project = "Nuclear Power Plant Authority CS";
+        } else if ("EPC Contractor Company".equals(selectedOrganization)) {
+            policy = "IMS_PM_ContractorsLetter";
+            project = "EPC Contractor CS";
+        } else if ("Owner Operator Company".equals(selectedOrganization)) {
+            policy = "IMS_PM_OwnersLetter";
+            project = "Owner Operator CS";
         } else {
             showAlert("Выберите корректную организацию");
             return;
@@ -163,7 +169,7 @@ public class Controller {
             for (int i = 1; i <= lettersAmount; i++) {
                 String selectedStatus = statusComboBox.getValue();
 
-                int randomNumber = random.nextInt(1000000) + 1;
+                int randomNumber = (int) System.currentTimeMillis();
                 String imsCode = generateImsCode(organizationComboBox.getValue(), topicComboBox.getValue(), i);
                 String script = "mql add bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 policy '"
                         + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
@@ -183,7 +189,7 @@ public class Controller {
                 writer.write("mql add connection IMS_ClassifiedItem to IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 from $topicId;\n");
                 // Add connection to user
                 writer.write("mql add connection IMS_PM_Letter2Creator from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 to Person " + userNameComboBox.getValue() + " -;\n");
-               //связь на организатора отправителя
+                //связь на организатора отправителя
                 writer.write("mql add connection IMS_PM_Letter2SenderOrganization to Company '" + organizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n");
 
                 // Добавляем связь с организацией-получателем
