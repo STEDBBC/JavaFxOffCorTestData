@@ -39,35 +39,35 @@ public class Controller {
     @FXML
     private ComboBox<String> statusComboBox;
     private final ObservableList<String> contractorStatuses = FXCollections.observableArrayList(
-            "Created",
-            "Published"
+        "Created",
+        "Published"
     );
 
     private final ObservableList<String> customerStatuses = FXCollections.observableArrayList(
-            "Created",
-            "Uploaded"
+        "Created",
+        "Published"
     );
 
 
     private final ObservableList<String> topics = FXCollections.observableArrayList(
-            "Information Technology",
-            "Quality Management",
-            "Project Management",
-            "Safety Management",
-            "Radiation Safety",
-            "Cost Management",
-            "Human Management",
-            "Change Management",
-            "Interface Management",
-            "Commissioning",
-            "General",
-            "Procurement and Supply",
-            "Training",
-            "Licensing and Permits",
-            "Construction Management",
-            "Security Management",
-            "Contract Management",
-            "Design Management"
+        "Information Technology",
+        "Quality Management",
+        "Project Management",
+        "Safety Management",
+        "Radiation Safety",
+        "Cost Management",
+        "Human Management",
+        "Change Management",
+        "Interface Management",
+        "Commissioning",
+        "General",
+        "Procurement and Supply",
+        "Training",
+        "Licensing and Permits",
+        "Construction Management",
+        "Security Management",
+        "Contract Management",
+        "Design Management"
     );
     @FXML
     private Label warningLabel;
@@ -85,18 +85,21 @@ public class Controller {
     @FXML
     public void initialize() {
         userNameComboBox.getItems().addAll(
-                "ec_user1", "migration_user", "oo_user1",
-                "ec_user2", "ec_user3", "ec_user4", "ec_user5",
-                "oo_user2", "oo_user3", "oo_user4", "oo_user5", "epc_contr_user2"
+            "ec_user1", "migration_user", "oo_user1",
+            "ec_user2", "ec_user3", "ec_user4", "ec_user5",
+            "oo_user2", "oo_user3", "oo_user4", "oo_user5", "epc_contr_user2",
+            "owner_operator_user3"
         );
-        organizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "EPC Contractor Company");
-        recipientOrganizationComboBox.getItems().addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "Owner Operator Company");
+        organizationComboBox.getItems()
+            .addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "EPC Contractor Company", "Owner Operator Company");
+        recipientOrganizationComboBox.getItems()
+            .addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "Owner Operator Company", "EPC Contractor Company");
         topicComboBox.setItems(topics);
         warningLabel.visibleProperty().bind(isInvalidInput);
         organizationComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if ("JSC EC ASE".equals(newValue) || "JSC ASE".equals(newValue) || "EPC Contractor Company".equals(newValue)) {
                 statusComboBox.setItems(contractorStatuses);
-            } else if ("Nuclear Power Plant Authority".equals(newValue)|| "Owner Operator Company".equals(newValue)) {
+            } else if ("Nuclear Power Plant Authority".equals(newValue) || "Owner Operator Company".equals(newValue)) {
                 statusComboBox.setItems(customerStatuses);
             } else {
                 statusComboBox.setItems(FXCollections.emptyObservableList());
@@ -157,45 +160,50 @@ public class Controller {
         File outputFile = new File(chosenDirectory, "output_script.txt");
         File deleteOutputFile = new File(chosenDirectory, "delete_script.txt");
 
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
-             BufferedWriter deleteWriter = new BufferedWriter(new FileWriter(deleteOutputFile))) {
+            BufferedWriter deleteWriter = new BufferedWriter(new FileWriter(deleteOutputFile))) {
             writer.write("set context person creator;\n");
             writer.write("start transaction;\n");
             writer.write("tcl;\n");
+            String topicId = getTopicId(topicComboBox.getValue());
+            writer.write("set topicNameRevision [mql temp query bus IMS_Adm_GeneralClass " + topicId + " * select id dump tcl];\n");
+            writer.write("set topicId [lindex $topicNameRevision 0 3 0];\n");
             Random random = new Random();
             deleteWriter.write("set context person creator;\n");
             deleteWriter.write("start transaction;\n");
             for (int i = 1; i <= lettersAmount; i++) {
                 String selectedStatus = statusComboBox.getValue();
-
+                writer.write("#########\n");
                 int randomNumber = (int) System.currentTimeMillis();
                 String imsCode = generateImsCode(organizationComboBox.getValue(), topicComboBox.getValue(), i);
                 String script = "mql add bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 policy '"
-                        + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
-                        + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
-                        + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
-                        + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
-                        + organizationComboBox.getValue() + "' current '" + selectedStatus + "' IMS_CorrespondenceSubject 'subject text' IMS_RegistrationDate '"
-                        + formattedDate + "';\n";
+                    + policy + "' Description '999' IMS_Code '" + imsCode + "' Originated '"
+                    + formattedDate + "' IMS_RegistrationNumber '322' Title 'titleTest"
+                    + i + "' owner '" + userNameComboBox.getValue() + "' Originator '"
+                    + userNameComboBox.getValue() + "' project '" + project + "' Organization '"
+                    + organizationComboBox.getValue() + "' current '" + selectedStatus
+                    + "' IMS_CorrespondenceSubject 'subject text' IMS_RegistrationDate '"
+                    + formattedDate + "';\n";
                 String deleteScript = "del bus IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n";
                 deleteWriter.write(deleteScript);
                 writer.write(script);
 
                 // Add connection to topic
-                String topicId = getTopicId(topicComboBox.getValue());
-                writer.write("set topicNameRevision [mql temp query bus IMS_Adm_GeneralClass " + topicId + " * select id dump tcl];\n");
-                writer.write("set topicId [lindex $topicNameRevision 0 3 0];\n");
-                writer.write("mql add connection IMS_ClassifiedItem to IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 from $topicId;\n");
+
+                writer.write(
+                    "mql add connection IMS_ClassifiedItem to IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber)
+                        + " 0 from $topicId;\n");
                 // Add connection to user
-                writer.write("mql add connection IMS_PM_Letter2Creator from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0 to Person " + userNameComboBox.getValue() + " -;\n");
+                writer.write("mql add connection IMS_PM_Letter2Creator from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i,
+                    randomNumber) + " 0 to Person " + userNameComboBox.getValue() + " -;\n");
                 //связь на организатора отправителя
-                writer.write("mql add connection IMS_PM_Letter2SenderOrganization to Company '" + organizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n");
+                writer.write("mql add connection IMS_PM_Letter2SenderOrganization to Company '" + organizationComboBox.getValue()
+                    + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n");
 
                 // Добавляем связь с организацией-получателем
-                writer.write("mql add connection IMS_PM_Letter2RecipientOrganization to Company '" + recipientOrganizationComboBox.getValue() + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n");
+                writer.write("mql add connection IMS_PM_Letter2RecipientOrganization to Company '" + recipientOrganizationComboBox.getValue()
+                    + "' - from IMS_PM_Letter TestPmLetterFromJavaFX" + String.format("-%05d-%07d", i, randomNumber) + " 0;\n");
             }
-
 
             writer.write("mql commit transaction;\n");
             deleteWriter.write("commit transaction;\n");
@@ -224,6 +232,7 @@ public class Controller {
             lettersAmountTextField.setOnKeyReleased(e -> isInvalidInput.set(false));
         }
     }
+
     private String generateImsCode(String organization, String topic, int letterNumber) {
         String organizationPart;
         String topicPart;
@@ -297,6 +306,7 @@ public class Controller {
 
         return staticPart + organizationPart + "-" + topicPart + numberPart;
     }
+
     private String getTopicId(String topicName) {
         Map<String, String> topicIds = new HashMap<>();
         topicIds.put("Design Management", "0000113001");
