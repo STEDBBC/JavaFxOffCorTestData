@@ -91,15 +91,15 @@ public class Controller {
             "owner_operator_user3"
         );
         organizationComboBox.getItems()
-            .addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "EPC Contractor Company", "Owner Operator Company");
+            .addAll("JSC EC ASE", "JSC ASE","ASE JSC", "Nuclear Power Plant Authority", "EPC Contractor Company", "Owner Operator Company");
         recipientOrganizationComboBox.getItems()
-            .addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "Owner Operator Company", "EPC Contractor Company");
+            .addAll("JSC EC ASE", "JSC ASE", "Nuclear Power Plant Authority", "Owner Operator Company", "EPC Contractor Company","NPPA");
         topicComboBox.setItems(topics);
         warningLabel.visibleProperty().bind(isInvalidInput);
         organizationComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if ("JSC EC ASE".equals(newValue) || "JSC ASE".equals(newValue) || "EPC Contractor Company".equals(newValue)) {
+            if ("JSC EC ASE".equals(newValue) || "JSC ASE".equals(newValue) || "EPC Contractor Company".equals(newValue)|| "ASE JSC".equals(newValue)) {
                 statusComboBox.setItems(contractorStatuses);
-            } else if ("Nuclear Power Plant Authority".equals(newValue) || "Owner Operator Company".equals(newValue)) {
+            } else if ("Nuclear Power Plant Authority".equals(newValue) || "Owner Operator Company".equals(newValue)|| "NPPA".equals(newValue)) {
                 statusComboBox.setItems(customerStatuses);
             } else {
                 statusComboBox.setItems(FXCollections.emptyObservableList());
@@ -138,10 +138,10 @@ public class Controller {
 
         String selectedOrganization = organizationComboBox.getValue();
 
-        if ("JSC EC ASE".equals(selectedOrganization) || "JSC ASE".equals(selectedOrganization)) {
+        if ("JSC EC ASE".equals(selectedOrganization) || "JSC ASE".equals(selectedOrganization)|| "ASE JSC".equals(selectedOrganization)) {
             policy = "IMS_PM_ContractorsLetter";
             project = "JSC EC ASE CS";
-        } else if ("Nuclear Power Plant Authority".equals(selectedOrganization)) {
+        } else if ("Nuclear Power Plant Authority".equals(selectedOrganization)|| "NPPA".equals(selectedOrganization)) {
             policy = "IMS_PM_OwnersLetter";
             project = "Nuclear Power Plant Authority CS";
         } else if ("EPC Contractor Company".equals(selectedOrganization)) {
@@ -239,7 +239,7 @@ public class Controller {
         String staticPart = "ED";
         String numberPart = String.format("-%06d", letterNumber);
 
-        if ("JSC EC ASE".equals(organization) || "JSC ASE".equals(organization)) {
+        if ("JSC EC ASE".equals(organization) || "JSC ASE".equals(organization)|| "ASE JSC".equals(organization)) {
             organizationPart = "-ASEM-NPPA";
         } else {
             organizationPart = "-NPPA-ASEM";
