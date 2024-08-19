@@ -157,8 +157,8 @@ public class Controller {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm:ss a");
         String formattedDate = letterDatePicker.getValue().atStartOfDay().format(dateFormatter);
 
-        File outputFile = new File(chosenDirectory, "output_script.txt");
-        File deleteOutputFile = new File(chosenDirectory, "delete_script.txt");
+        File outputFile = new File(chosenDirectory, "output_script" + System.currentTimeMillis() + ".txt");
+        File deleteOutputFile = new File(chosenDirectory, "delete_script" + System.currentTimeMillis() + ".txt");
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
             BufferedWriter deleteWriter = new BufferedWriter(new FileWriter(deleteOutputFile))) {
